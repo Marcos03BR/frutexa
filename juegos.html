@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRUTEXA | Zona Interactiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primario: #006837;
+            --color-acento: #4CAF50;
+            --color-fondo: #f0f7f2;
+            --color-blanco: #ffffff;
+            --color-texto: #333333;
+            --borde-redondeado: 20px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-primario), var(--color-acento));
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover { background: rgba(255,255,255,0.4); }
+
+        .container {
+            max-width: 1000px;
+            width: 95%;
+            margin: 30px auto;
+        }
+
+        /* --- Tabs Navigation --- */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--color-acento);
+            color: var(--color-primario);
+            font-weight: 600;
+            font-size: 1.1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--color-acento);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: var(--borde-redondeado);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 1. Simulador --- */
+        .ingredientes-zona {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .ingrediente {
+            width: 80px; height: 80px;
+            background: #f9f9f9;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5em; cursor: grab;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            user-select: none;
+        }
+
+        .ingrediente:active { cursor: grabbing; transform: scale(0.95); }
+        .ingrediente:hover { border-color: var(--color-acento); transform: translateY(-5px); }
+
+        .procesadora {
+            width: 220px; height: 260px;
+            background: #e0e0e0;
+            border-radius: 20px 20px 50px 50px;
+            margin: 0 auto; position: relative;
+            border: 8px solid #9e9e9e;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 -20px 0 rgba(0,0,0,0.1), 0 20px 30px rgba(0,0,0,0.15);
+        }
+
+        .procesadora.active {
+            border-color: var(--color-acento); background: #dff0d8;
+            box-shadow: 0 0 30px var(--color-acento);
+        }
+
+        .procesadora.processing { animation: vibrar 0.4s infinite; }
+        @keyframes vibrar {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            50% { transform: translate(-2px, -2px) rotate(-1deg); }
+            100% { transform: translate(2px, -2px) rotate(1deg); }
+        }
+
+        .boca-maquina {
+            width: 130px; height: 35px; background: #757575;
+            border-radius: 20px; margin-top: -50px; margin-bottom: 20px;
+        }
+
+        .btn-procesar {
+            display: block; margin: 30px auto 0; padding: 15px 40px; font-size: 1.2em;
+            background: var(--color-acento); color: white; border: none; border-radius: 30px;
+            cursor: pointer; font-weight: bold; opacity: 0.5; pointer-events: none; transition: 0.3s;
+        }
+
+        .btn-procesar.ready { opacity: 1; pointer-events: all; box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3); }
+
+        .progress-container {
+            width: 80%; height: 10px; background: #ccc; border-radius: 5px;
+            margin-top: 15px; display: none; overflow: hidden;
+        }
+        .progress-bar { height: 100%; background: var(--color-primario); width: 0%; transition: width 0.1s linear; }
+
+        /* --- 2. Quiz --- */
+        .quiz-container { text-align: center; }
+        .pregunta { font-size: 1.4em; font-weight: 600; color: var(--color-primario); margin-bottom: 20px; }
+        .opciones { display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
+        .opcion-btn {
+            padding: 15px; font-size: 1.1em; background: #f9f9f9; border: 2px solid #ddd;
+            border-radius: 15px; cursor: pointer; transition: 0.2s; text-align: left;
+        }
+        .opcion-btn:hover { background: #eef7ee; border-color: var(--color-acento); }
+        .opcion-btn.correct { background: #dff0d8; border-color: #4CAF50; color: #006837; font-weight: bold; }
+        .opcion-btn.wrong { background: #f8dbdb; border-color: #f44336; color: #b71c1c; }
+        .quiz-feedback { margin-top: 20px; font-size: 1.2em; font-weight: bold; display: none; }
+        
+        #btn-siguiente-quiz {
+            margin-top: 20px; padding: 10px 30px; background: var(--color-primario); color: white;
+            border: none; border-radius: 20px; font-size: 1.1em; cursor: pointer; display: none;
+        }
+
+        /* --- 3. Calculadora --- */
+        .calc-box { text-align: center; }
+        input[type="range"] { width: 100%; max-width: 500px; margin: 20px 0; }
+        .calc-resultado {
+            display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 30px; gap: 20px;
+        }
+        .calc-impacto {
+            background: #f0f7f2; padding: 25px; border-radius: 20px; flex: 1 1 200px;
+            border: 2px solid var(--color-acento);
+        }
+        .calc-valor { font-size: 2.5em; font-weight: bold; color: var(--color-primario); margin: 10px 0; }
+
+        /* Modal Resultado Simulador */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 40px; border-radius: var(--borde-redondeado);
+            text-align: center; max-width: 500px; transform: scale(0.8); transition: 0.3s;
+        }
+        .modal.show .modal-content { transform: scale(1); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-btn">⬅ Volver</a>
+        <h1>🎮 Zona Interactiva FRUTEXA</h1>
+        <p style="margin: 0; opacity: 0.9;">Aprende y juega con el futuro de la alimentación</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('simulador')">1. Simulador TPFSC</button>
+            <button class="tab-btn" onclick="openTab('quiz')">2. Quiz Sostenible</button>
+            <button class="tab-btn" onclick="openTab('calculadora')">3. Impacto Ambiental</button>
+        </div>
+
+        <!-- TAB 1: SIMULADOR -->
+        <div id="simulador" class="tab-content active" style="text-align: center;">
+            <h2 style="color: var(--color-primario);">Biorrefinadora Virtual</h2>
+            <p>¡Prueba a mezclar diferentes frutas (3 máximo)! Según lo que arrastres, crearás un producto distinto.</p>
+            
+            <div class="ingredientes-zona">
+                <div class="ingrediente" draggable="true" data-fruta="Kiwi">🥝</div>
+                <div class="ingrediente" draggable="true" data-fruta="Plátano">🍌</div>
+                <div class="ingrediente" draggable="true" data-fruta="Manzana">🍎</div>
+                <div class="ingrediente" draggable="true" data-fruta="Naranja">🍊</div>
+                <div class="ingrediente" draggable="true" data-fruta="Fresa">🍓</div>
+            </div>
+
+            <div class="procesadora" id="zona-drop">
+                <div class="boca-maquina"></div>
+                <div id="contador" style="font-size:1.5em; font-weight:bold;">0 / 3</div>
+                
+                <div class="progress-container" id="progreso-contenedor">
+                    <div class="progress-bar" id="barra-progreso"></div>
+                </div>
+            </div>
+
+            <button class="btn-procesar" id="btn-iniciar">Mezclar y Crear ⚡</button>
+        </div>
+
+        <!-- TAB 2: QUIZ -->
+        <div id="quiz" class="tab-content">
+            <h2 style="text-align: center; color: var(--color-primario);">🧐 ¿Cuánto sabes sobre Frutexa?</h2>
+            <div class="quiz-container" id="quiz-zona">
+                <!-- Se inyecta con JS -->
+            </div>
+        </div>
+
+        <!-- TAB 3: CALCULADORA -->
+        <div id="calculadora" class="tab-content">
+            <h2 style="text-align: center; color: var(--color-primario);">🌍 El Poder de tu Decisión</h2>
+            <p style="text-align: center;">¿Cuántas raciones de carne tradicional sustituirías al mes por FRUTEXA?</p>
+            
+            <div class="calc-box">
+                <p style="font-size:1.5em; font-weight:bold;" id="slider-val">10 raciones / mes</p>
+                <input type="range" id="raciones-slider" min="1" max="50" value="10" oninput="calcularImpacto()">
+                
+                <div class="calc-resultado">
+                    <div class="calc-impacto">
+                        <h3>💧 Agua Ahorrada</h3>
+                        <div class="calc-valor" id="ahorro-agua">23,500 L</div>
+                        <p style="font-size:0.9em; color:#555;">Equivale a darte <span id="duchas">470</span> duchas.</p>
+                    </div>
+                    <div class="calc-impacto">
+                        <h3>☁️ CO2 Evitado</h3>
+                        <div class="calc-valor" id="ahorro-co2">38 kg</div>
+                        <p style="font-size:0.9em; color:#555;">Equivale a no conducir un coche por <span id="kmcoche">190</span> km.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Resultado Simulador -->
+    <div class="modal" id="modal-exito">
+        <div class="modal-content">
+            <h2 style="color: var(--color-primario); margin-top: 0;">¡Nueva Creación! 🎉</h2>
+            <div id="res-icono" style="font-size: 5em; margin: 10px 0;">🥩</div>
+            <h3 id="res-nombre" style="color: var(--color-acento);">Medallón Clásico</h3>
+            <p>Usaste: <span id="res-frutas"></span></p>
+            <button onclick="reiniciarSimulador()" style="padding: 10px 25px; background: var(--color-primario); color: white; border: none; border-radius: 20px; cursor: pointer; margin-top: 15px;">Hacer otro</button>
+        </div>
+    </div>
+
+    <script>
+        // --- NAVEGACIÓN TABS ---
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // --- 1. SIMULADOR ---
+        const ingredientes = document.querySelectorAll('.ingrediente');
+        const maquina = document.getElementById('zona-drop');
+        const contadorDiv = document.getElementById('contador');
+        const btnIniciar = document.getElementById('btn-iniciar');
+        const barra = document.getElementById('barra-progreso');
+        const contProgreso = document.getElementById('progreso-contenedor');
+        const modal = document.getElementById('modal-exito');
+        
+        let recolectados = 0;
+        let frutasUsadas = [];
+
+        ingredientes.forEach(ing => {
+            ing.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('fruta', e.target.dataset.fruta);
+                setTimeout(() => e.target.style.opacity = '0.5', 0);
+            });
+            ing.addEventListener('dragend', e => {
+                e.target.style.opacity = '1';
+                maquina.classList.remove('active');
+            });
+        });
+
+        maquina.addEventListener('dragover', e => { e.preventDefault(); maquina.classList.add('active'); });
+        maquina.addEventListener('dragleave', () => maquina.classList.remove('active'));
+        
+        maquina.addEventListener('drop', e => {
+            e.preventDefault(); maquina.classList.remove('active');
+            if (recolectados >= 3) return;
+
+            const f = e.dataTransfer.getData('fruta');
+            if(f) {
+                frutasUsadas.push(f);
+                recolectados++;
+                contadorDiv.innerText = `${recolectados} / 3`;
+                maquina.style.transform = 'scale(1.05)';
+                setTimeout(() => maquina.style.transform = 'scale(1)', 150);
+                
+                if (recolectados === 3) btnIniciar.classList.add('ready');
+            }
+        });
+
+        btnIniciar.addEventListener('click', () => {
+            if (recolectados < 3) return;
+            btnIniciar.classList.remove('ready');
+            btnIniciar.innerText = "Procesando...";
+            maquina.classList.add('processing');
+            contProgreso.style.display = 'block';
+
+            let prog = 0;
+            const int = setInterval(() => {
+                prog += 3; barra.style.width = prog + '%';
+                if (prog >= 100) {
+                    clearInterval(int);
+                    maquina.classList.remove('processing');
+                    mostrarResultadoReceta(frutasUsadas);
+                }
+            }, 50);
+        });
+
+        function mostrarResultadoReceta(frutas) {
+            let nombre = "Albóndiga Vegetal Clásica";
+            let icono = "🧆";
+
+            // Lógica de mezclas
+            const mix = frutas.join('-');
+            if(frutas.every(v => v === frutas[0])) {
+                nombre = `Filete 100% Puro ${frutas[0]}`;
+                icono = "🥩";
+            } else if (frutas.includes('Fresa') && frutas.includes('Plátano')) {
+                nombre = "Hamburguesa Sweet&Fit";
+                icono = "🍔";
+            } else if (frutas.includes('Kiwi') && frutas.includes('Manzana')) {
+                nombre = "Salchicha Verde Antioxidante";
+                icono = "🌭";
+            } else if (frutas.includes('Naranja')) {
+                nombre = "Nuggets Cítricos Crujientes";
+                icono = "🥟";
+            }
+
+            document.getElementById('res-icono').innerText = icono;
+            document.getElementById('res-nombre').innerText = nombre;
+            document.getElementById('res-frutas').innerText = frutas.join(', ');
+            
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function reiniciarSimulador() {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                recolectados = 0; frutasUsadas = [];
+                contadorDiv.innerText = "0 / 3";
+                barra.style.width = '0%'; contProgreso.style.display = 'none';
+                btnIniciar.innerText = "Mezclar y Crear ⚡";
+            }, 300);
+        }
+
+        // --- 2. QUIZ SOSTENIBLE ---
+        const preguntas = [
+            {
+                q: "¿Qué significan las siglas del rol TPFSC, el profesional del futuro?",
+                opts: ["Técnico de Plantas Forestales", "Tecnólogo en Piel Frutal Sustitutiva de Carne", "Trabajador de Producción Frutal"],
+                ans: 1
+            },
+            {
+                q: "¿Cuál es la principal materia prima de FRUTEXA?",
+                opts: ["Carnes cultivadas en laboratorio", "Soja y guisantes importados", "Pieles y restos de frutas descartadas"],
+                ans: 2
+            },
+            {
+                q: "¿Para qué año planea FRUTEXA ser referente global?",
+                opts: ["2028", "2040", "2050"],
+                ans: 1
+            }
+        ];
+
+        let qActual = 0;
+        const quizUI = document.getElementById('quiz-zona');
+
+        function renderQuiz() {
+            if (qActual >= preguntas.length) {
+                quizUI.innerHTML = `<h3 style="color:var(--color-acento); font-size:2em;">¡Quiz Completado! 🏆</h3>
+                                    <p>Estás listo/a para el futuro sostenible.</p>
+                                    <button onclick="qActual=0; renderQuiz()" class="back-btn" style="position:static; background:var(--color-primario); margin-top:20px;">Repetir Quiz</button>`;
+                return;
+            }
+
+            const p = preguntas[qActual];
+            let html = `<div class="pregunta">${qActual + 1}. ${p.q}</div><div class="opciones">`;
+            
+            p.opts.forEach((opt, idx) => {
+                html += `<button class="opcion-btn" onclick="checkAnswer(${idx}, ${p.ans}, this)">${opt}</button>`;
+            });
+            html += `</div><div class="quiz-feedback" id="feedback-txt"></div>
+                     <button id="btn-siguiente-quiz" onclick="qActual++; renderQuiz()">Siguiente ➔</button>`;
+            
+            quizUI.innerHTML = html;
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            const btns = document.querySelectorAll('.opcion-btn');
+            btns.forEach(b => b.style.pointerEvents = 'none'); // Bloquear clicks
+            
+            const feedback = document.getElementById('feedback-txt');
+            const btnSiguiente = document.getElementById('btn-siguiente-quiz');
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                feedback.innerText = "¡Correcto! ✅";
+                feedback.style.color = "#4CAF50";
+            } else {
+                btn.classList.add('wrong');
+                btns[correct].classList.add('correct'); // Mostrar la buena
+                feedback.innerText = "Incorrecto ❌";
+                feedback.style.color = "#f44336";
+            }
+            feedback.style.display = 'block';
+            btnSiguiente.style.display = 'inline-block';
+        }
+
+        renderQuiz();
+
+        // --- 3. CALCULADORA DE IMPACTO ---
+        // Stats: Carne Res = 2400L agua / 4kg CO2 por ración. FRUTEXA = 50L agua / 0.2kg CO2.
+        // Ahorro neto por ración: 2350 L de agua y 3.8 kg CO2
+        function calcularImpacto() {
+            const raciones = document.getElementById('raciones-slider').value;
+            document.getElementById('slider-val').innerText = `${raciones} raciones / mes`;
+
+            const ahorroAgua = raciones * 2350;
+            const ahorroCO2 = (raciones * 3.8).toFixed(1);
+
+            document.getElementById('ahorro-agua').innerText = ahorroAgua.toLocaleString() + " L";
+            document.getElementById('ahorro-co2').innerText = ahorroCO2 + " kg";
+
+            // Equivalencias divertidas (una ducha = 50L, un coche = 5km por kg CO2 aprox)
+            document.getElementById('duchas').innerText = Math.round(ahorroAgua / 50);
+            document.getElementById('kmcoche').innerText = Math.round(ahorroCO2 * 5);
+        }
+
+        calcularImpacto(); // Init
+    </script>
+</body>
+</html>

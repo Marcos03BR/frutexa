@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRUTEXA | Simulador de Transformación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primario: #006837;
+            --color-acento: #4CAF50;
+            --color-fondo: #f0f7f2;
+            --color-blanco: #ffffff;
+            --color-texto: #333333;
+            --borde-redondeado: 20px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-primario), var(--color-acento));
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .instrucciones {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+
+        /* Zona de ingredientes */
+        .ingredientes-zona {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .ingrediente {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            cursor: grab;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            user-select: none;
+        }
+
+        .ingrediente:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .ingrediente:hover {
+            border-color: var(--color-acento);
+            transform: translateY(-5px);
+        }
+
+        /* Zona de máquina procesadora */
+        .procesadora {
+            width: 250px;
+            height: 300px;
+            background: #e0e0e0;
+            border-radius: 20px 20px 50px 50px;
+            margin: 0 auto;
+            position: relative;
+            border: 8px solid #9e9e9e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 -20px 0 rgba(0,0,0,0.1), 0 20px 30px rgba(0,0,0,0.15);
+        }
+
+        .procesadora.active {
+            border-color: var(--color-acento);
+            background: #dff0d8;
+            box-shadow: 0 0 30px var(--color-acento);
+        }
+
+        .procesadora.processing {
+            animation: vibrar 0.5s infinite;
+        }
+
+        @keyframes vibrar {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            10% { transform: translate(-2px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(2px, -2px) rotate(1deg); }
+            50% { transform: translate(-2px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-2px, -2px) rotate(1deg); }
+            90% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .boca-maquina {
+            width: 150px;
+            height: 40px;
+            background: #757575;
+            border-radius: 20px;
+            margin-top: -60px;
+            margin-bottom: 20px;
+        }
+
+        .contador {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--color-texto);
+        }
+
+        .btn-procesar {
+            margin-top: 40px;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: var(--color-acento);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+            transition: background 0.3s, transform 0.2s;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn-procesar.ready {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .btn-procesar.ready:hover {
+            background: var(--color-primario);
+            transform: translateY(-3px);
+        }
+
+        /* Modal Resultado */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 50px;
+            border-radius: var(--borde-redondeado);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .resultado-img {
+            font-size: 6em;
+            margin: 20px 0;
+        }
+
+        .close-modal {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: var(--color-primario);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--color-acento);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-btn">⬅ Volver</a>
+        <h1>Laboratorio TPFSC</h1>
+        <p style="margin: 0; opacity: 0.9;">Simulador de Economía Circular</p>
+    </header>
+
+    <div class="container">
+        
+        <p class="instrucciones">¡Arrastra 3 residuos frutales a la biorrefinadora para crear nuestra alternativa cárnica!</p>
+
+        <div class="ingredientes-zona">
+            <div class="ingrediente" draggable="true" data-fruta="Kiwi">🥝</div>
+            <div class="ingrediente" draggable="true" data-fruta="Plátano">🍌</div>
+            <div class="ingrediente" draggable="true" data-fruta="Manzana">🍎</div>
+            <div class="ingrediente" draggable="true" data-fruta="Naranja">🍊</div>
+            <div class="ingrediente" draggable="true" data-fruta="Fresa">🍓</div>
+        </div>
+
+        <div class="procesadora" id="zona-drop">
+            <div class="boca-maquina"></div>
+            <div class="contador">0 / 3</div>
+            <div style="font-size: 0.8em; color: #666; margin-top: 10px;">Residuos recolectados</div>
+            
+            <div class="progress-container" id="progreso-contenedor">
+                <div class="progress-bar" id="barra-progreso"></div>
+            </div>
+        </div>
+
+        <button class="btn-procesar" id="btn-iniciar">Iniciar Transformación ⚡</button>
+
+    </div>
+
+    <!-- Modal de Éxito -->
+    <div class="modal" id="modal-exito">
+        <div class="modal-content">
+            <h2 style="color: var(--color-primario); margin-top: 0;">¡Transformación Exitosa! 🎉</h2>
+            <div class="resultado-img">🥩✨</div>
+            <p>Has convertido <strong id="resumen-frutas"></strong> en <strong>1 Porción de Carne Vegetal FRUTEXA</strong>.</p>
+            <p style="color: var(--color-acento); font-weight: bold;">¡Has ahorrado agua, reducido emisiones y creado un superalimento!</p>
+            <button class="close-modal" onclick="reiniciar()">Hacer otro lote</button>
+        </div>
+    </div>
+
+    <script>
+        const ingredientes = document.querySelectorAll('.ingrediente');
+        const maquina = document.getElementById('zona-drop');
+        const contadorDiv = document.querySelector('.contador');
+        const btnIniciar = document.getElementById('btn-iniciar');
+        const barraProgreso = document.getElementById('barra-progreso');
+        const contenedorProgreso = document.getElementById('progreso-contenedor');
+        const modal = document.getElementById('modal-exito');
+        const resumenText = document.getElementById('resumen-frutas');
+
+        let residuosRecolectados = 0;
+        let frutasUsadas = [];
+
+        // Drag & Drop Events
+        ingredientes.forEach(ingrediente => {
+            ingrediente.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.dataset.fruta);
+                e.dataTransfer.setData('source_id', e.target.innerHTML);
+                setTimeout(() => e.target.style.opacity = '0.5', 0);
+            });
+
+            ingrediente.addEventListener('dragend', (e) => {
+                e.target.style.opacity = '1';
+                maquina.classList.remove('active');
+            });
+        });
+
+        maquina.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (residuosRecolectados < 3) {
+                maquina.classList.add('active');
+            }
+        });
+
+        maquina.addEventListener('dragleave', () => {
+            maquina.classList.remove('active');
+        });
+
+        maquina.addEventListener('drop', (e) => {
+            e.preventDefault();
+            maquina.classList.remove('active');
+            
+            if (residuosRecolectados >= 3) return;
+
+            const fruta = e.dataTransfer.getData('text/plain');
+            const emoji = e.dataTransfer.getData('source_id');
+            
+            if(fruta) {
+                // Ocultar el que se arrastró (simulando que entró a la máquina)
+                const draggedElement = Array.from(ingredientes).find(el => el.innerHTML === emoji && el.style.visibility !== 'hidden');
+                if(draggedElement) {
+                    draggedElement.style.visibility = 'hidden';
+                    draggedElement.style.opacity = '0';
+                    
+                    frutasUsadas.push(fruta);
+                    residuosRecolectados++;
+                    actualizarContador();
+
+                    // Animación visual de que entró algo
+                    maquina.style.transform = 'scale(1.05)';
+                    setTimeout(() => maquina.style.transform = 'scale(1)', 150);
+                }
+            }
+        });
+
+        function actualizarContador() {
+            contadorDiv.innerText = `${residuosRecolectados} / 3`;
+            if (residuosRecolectados === 3) {
+                btnIniciar.classList.add('ready');
+                contadorDiv.style.color = "var(--color-primario)";
+            }
+        }
+
+        // Proceso de Transformación
+        btnIniciar.addEventListener('click', () => {
+            if (residuosRecolectados < 3) return;
+
+            btnIniciar.classList.remove('ready');
+            btnIniciar.innerText = "Procesando...";
+            maquina.classList.add('processing');
+            contenedorProgreso.style.display = 'block';
+
+            let progreso = 0;
+            const intervalo = setInterval(() => {
+                progreso += 2;
+                barraProgreso.style.width = progreso + '%';
+
+                if (progreso >= 100) {
+                    clearInterval(intervalo);
+                    maquina.classList.remove('processing');
+                    btnIniciar.innerText = "Limpiando máquina...";
+                    
+                    setTimeout(() => {
+                        mostrarResultado();
+                    }, 500);
+                }
+            }, 50); // Simula unos 2.5 segundos de proceso
+        });
+
+        function mostrarResultado() {
+            const formateado = frutasUsadas.join(', ').replace(/, ([^,]*)$/, ' y $1');
+            resumenText.innerText = formateado.toLowerCase();
+            
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+        }
+
+        function reiniciar() {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                
+                // Reset estados
+                residuosRecolectados = 0;
+                frutasUsadas = [];
+                actualizarContador();
+                contadorDiv.style.color = "var(--color-texto)";
+                
+                barraProgreso.style.width = '0%';
+                contenedorProgreso.style.display = 'none';
+                
+                btnIniciar.innerText = "Iniciar Transformación ⚡";
+                btnIniciar.classList.remove('ready');
+                
+                // Mostrar todos los ingredientes de nuevo
+                ingredientes.forEach(ing => {
+                    ing.style.visibility = 'visible';
+                    ing.style.opacity = '1';
+                });
+            }, 400);
+        }
+
+    </script>
+</body>
+</html>
