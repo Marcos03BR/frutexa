@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRUTEXA | Innovación Circular 2040</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Variables de Diseño (Basadas en tus imágenes) --- */
+        :root {
+            --color-primario: #006837; /* Verde oscuro corporativo */
+            --color-acento: #4CAF50;   /* Verde brillante eco */
+            --color-fondo-body: #f0f7f2; /* Fondo gris/verde muy claro */
+            --color-blanco: #ffffff;
+            --color-texto: #333333;
+            --color-texto-suave: #555555;
+            --borde-redondeado: 20px;
+            --sombra-suave: 0 10px 30px -10px rgba(0, 104, 55, 0.15);
+        }
+
+        /* --- Estilos Generales y Animaciones --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo-body);
+            background-image: radial-gradient(circle at 10% 20%, rgba(76, 175, 80, 0.08) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 104, 55, 0.05) 0%, transparent 40%);
+            color: var(--color-texto);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--color-primario);
+            margin-top: 0;
+        }
+
+        strong {
+            color: var(--color-primario);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Clase para tarjetas blancas estilo "eco-moderno" */
+        .card {
+            background: var(--color-blanco);
+            border-radius: var(--borde-redondeado);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px -10px rgba(0, 104, 55, 0.1);
+            border: none;
+            position: relative;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 45px -10px rgba(0, 104, 55, 0.15);
+        }
+
+        /* Animaciones de entrada al hacer scroll */
+        .hidden {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Header / Hero Section --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, var(--color-primario) 0%, #158b4b 100%);
+            border-bottom-left-radius: 60px;
+            border-bottom-right-radius: 60px;
+            box-shadow: 0 20px 40px rgba(0, 104, 55, 0.25);
+            margin-bottom: 50px;
+            color: var(--color-blanco);
+        }
+
+        .hero-logo img {
+            width: 170px;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+            border: 6px solid var(--color-blanco);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            background: var(--color-blanco);
+        }
+        
+        .hero-logo img:hover {
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero h1 {
+            color: var(--color-blanco);
+            font-size: 4em;
+            margin-bottom: 10px;
+            letter-spacing: -1.5px;
+            font-weight: 700;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            color: #dcedc8;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        /* --- Secciones de Contenido --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .highlight-box {
+            border-left: 6px solid var(--color-acento);
+            background: linear-gradient(to right, rgba(76, 175, 80, 0.05), transparent);
+        }
+
+        /* --- Sección Proceso (3 pasos visuales) --- */
+        .proceso-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            text-align: center;
+        }
+
+        .proceso-step {
+            background: var(--color-blanco);
+            padding: 40px 30px;
+            border-radius: var(--borde-redondeado);
+            border: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .proceso-step:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,104,55,0.15);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--color-primario), var(--color-acento));
+            color: white;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            font-size: 1.4em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* --- Tabla Nutricional Estilizada --- */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--borde-redondeado);
+            box-shadow: var(--sombra-suave);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 18px;
+            text-align: center;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--color-primario), #127944);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+            border: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5fbf7;
+        }
+        tr:hover {
+            background-color: #e4f2e8;
+            transition: background-color 0.3s ease;
+        }
+
+        /* --- ODS Grid --- */
+        .ods-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .ods-badge {
+            background: var(--color-blanco);
+            padding: 20px;
+            border-radius: var(--borde-redondeado);
+            font-weight: 600;
+            box-shadow: var(--sombra-suave);
+            flex: 1 1 200px;
+            text-align: center;
+            max-width: 250px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            color: var(--color-primario);
+        }
+        
+        .ods-badge:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-acento);
+            box-shadow: 0 15px 30px rgba(76, 175, 80, 0.2);
+        }
+
+        .ods-badge img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--color-primario);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            margin-top: 40px;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+
+        footer h2 {
+            color: var(--color-acento);
+            font-size: 2.2em;
+        }
+        
+        footer p {
+            color: #e0e0e0;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .qr-placeholder {
+            background: white;
+            width: 180px;
+            height: 180px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primario);
+            font-weight: bold;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 4px dashed #ccc;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero hidden">
+        <div class="container">
+            <div class="hero-logo">
+                <img src="context/logo.jpeg" alt="Logo de FRUTEXA">
+            </div> 
+            <h1>FRUTEXA</h1>
+            <p class="tagline">Innovación Circular: Alimentarse nunca fue tan sostenible.</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="grid-2 hidden">
+            <div class="card highlight-box">
+                <h2>🎯 Nuestra Misión</h2>
+                <p>Transformar residuos frutales en alimentos innovadores y sostenibles, reduciendo el desperdicio y el impacto ambiental mediante economía circular. Creamos valor donde otros ven desechos.</p>
+            </div>
+            <div class="card highlight-box">
+                <h2>🚩 Nuestra Meta (2040)</h2>
+                <p>Convertirnos en el referente global en alimentación vegetal sostenible, disminuyendo drásticamente la huella de carbono y apoyando la rentabilidad del sector agrícola.</p>
+            </div>
+        </section>
+
+        <section class="card hidden">
+            <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1 1 400px;">
+                    <h2>👩‍🔬 El profesional del futuro: TPFSC</h2>
+                    <p>El <strong>Tecnólogo en Piel Frutal Sustitutiva de Carne (TPFSC)</strong> es el pilar de nuestra innovación. Un profesional que une ciencia alimentaria y conciencia ecológica.</p>
+                    <ul style="margin-bottom: 0;">
+                        <li>Transforma restos y pieles de frutas en alimentos vegetales de alto valor con textura similar a la carne.</li>
+                        <li>Domina técnicas avanzadas como deshidratación de precisión, prensado en frío y fermentación controlada.</li>
+                        <li>Su labor es clave para reducir el desperdicio alimentario y ofrecer opciones más saludables al consumidor.</li>
+                    </ul>
+                </div>
+                <div style="flex: 1 1 300px; text-align: center;">
+                    <img src="context/imagenmedico.jpeg" alt="Tecnólogo TPFSC Trabajando" style="width: 100%; max-width: 400px; border-radius: var(--borde-redondeado); box-shadow: var(--sombra-suave); border: 2px solid var(--color-acento);">
+                </div>
+            </div>
+        </section>
+
+        <section class="card hidden" style="background: #e9f5ec;">
+            <h2 style="text-align: center; margin-bottom: 40px;">♻️ El Proceso de Transformación</h2>
+            <div class="proceso-grid">
+                <div class="proceso-step">
+                    <div class="step-number">1</div>
+                    <h3>Aprovechamiento</h3>
+                    <p>Recolectamos pieles y frutas descartadas. Lo que antes era desperdicio agrícola, ahora es nuestra materia prima sostenible.</p>
+                </div>
+                <div class="proceso-step">
+                    <div class="step-number">2</div>
+                    <h3>Procesamiento Tecnológico</h3>
+                    <p>Aplicamos procesos de limpieza, deshidratación y fermentación. Convertimos el residuo mediante ingeniería de alimentos.</p>
+                </div>
+                <div class="proceso-step">
+                    <div class="step-number">3</div>
+                    <h3>Resultado Final</h3>
+                    <p>Obtenemos una alternativa vegetal rica en proteínas, con textura cárnica y un impacto ambiental mínimo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card hidden">
+            <h2 style="text-align: center;">📊 Valor Nutricional Estimado</h2>
+            <p style="text-align: center; color: var(--color-texto-suave); margin-bottom: 30px;"><em>(Valores medios por 100g de producto transformado FRUTEXA)</em></p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fruta Base</th>
+                            <th>Proteínas</th>
+                            <th>Grasas</th>
+                            <th>Carbohidratos</th>
+                            <th>Fibra</th>
+                            <th>Energía</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="text-align:left; font-weight:bold;">🥝 Kiwi</td><td>28 g</td><td>4 g</td><td>32 g</td><td>10 g</td><td>290 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🍎 Manzana</td><td>26 g</td><td>3 g</td><td>35 g</td><td>9 g</td><td>280 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🍌 Plátano</td><td>30 g</td><td>5 g</td><td>30 g</td><td>8 g</td><td>310 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🍊 Naranja</td><td>24 g</td><td>2 g</td><td>33 g</td><td>11 g</td><td>260 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🍓 Fresa</td><td>27 g</td><td>3 g</td><td>28 g</td><td>12 g</td><td>250 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🥭 Mango</td><td>29 g</td><td>4 g</td><td>34 g</td><td>9 g</td><td>300 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🍍 Piña</td><td>25 g</td><td>2 g</td><td>31 g</td><td>10 g</td><td>270 kcal</td></tr>
+                        <tr><td style="text-align:left; font-weight:bold;">🍇 Uva</td><td>23 g</td><td>2 g</td><td>38 g</td><td>7 g</td><td>295 kcal</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card hidden" style="text-align: center;">
+            <h2>🌍 Compromiso con los ODS</h2>
+            <p style="margin-bottom: 30px;">Nuestro modelo de negocio está intrínsecamente alineado con los Objetivos de Desarrollo Sostenible de la ONU.</p>
+            <div class="ods-container">
+                <div class="ods-badge">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="ODS 3: Salud y Bienestar">
+                    ODS 3: Salud y Bienestar
+                </div>
+                <div class="ods-badge">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="ODS 12: Producción Responsable">
+                    ODS 12: Producción Responsable
+                </div>
+                <div class="ods-badge">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="ODS 13: Acción por el Clima">
+                    ODS 13: Acción por el Clima
+                </div>
+                <div class="ods-badge">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg" alt="ODS 15: Ecosistemas Terrestres">
+                    ODS 15: Ecosistemas Terrestres
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="hidden">
+        <div class="container">
+            <h2>🚀 Únete al Futuro</h2>
+            <p>FRUTEXA demuestra que el futuro no se desperdicia... sino que se transforma. Cada fruta tiene una segunda oportunidad. El planeta también.</p>
+            <p>Forma parte del cambio. Apoya un modelo alimentario más responsable, donde cada recurso cuenta.</p>
+            
+            <div style="margin-top: 40px;">
+                <p><strong>📩 Escanea para Contactar</strong></p>
+                <div class="qr-placeholder">Tu Código QR Aquí</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const observerIntersection = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                }
+            });
+        }, { threshold: 0.1 }); // Se activa cuando el 10% del elemento es visible
+
+        const hiddenElements = document.querySelectorAll('.hidden');
+        hiddenElements.forEach((el) => observerIntersection.observe(el));
+    </script>
+
+</body>
+</html>
