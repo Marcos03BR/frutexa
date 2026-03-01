@@ -119,6 +119,7 @@
             border: 3px solid transparent;
             transition: transform 0.2s, border-color 0.2s;
             user-select: none;
+            touch-action: none; /* Prevenir scroll en móviles al tocar */
         }
 
         .ingrediente:active { cursor: grabbing; transform: scale(0.95); }
@@ -314,8 +315,13 @@
         
         let recolectados = 0;
         let frutasUsadas = [];
+        
+        // --- Soporte para Táctil / Móviles ---
+        let elementoArrastrado = null;
+        let posInicialX = 0, posInicialY = 0;
 
         ingredientes.forEach(ing => {
+            // Eventos Desktop
             ing.addEventListener('dragstart', e => {
                 e.dataTransfer.setData('fruta', e.target.dataset.fruta);
                 setTimeout(() => e.target.style.opacity = '0.5', 0);
@@ -324,8 +330,90 @@
                 e.target.style.opacity = '1';
                 maquina.classList.remove('active');
             });
+
+            // Eventos Táctiles (Móvil)
+            ing.addEventListener('touchstart', e => {
+                if (recolectados >= 3) return;
+                elementoArrastrado = e.target;
+                const touch = e.touches[0];
+                const rect = e.target.getBoundingClientRect();
+                
+                // Calculamos el offset para que no salte de golpe al dedo
+                posInicialX = touch.clientX - rect.left;
+                posInicialY = touch.clientY - rect.top;
+
+                e.target.style.position = 'fixed';
+                e.target.style.zIndex = '1000';
+                e.target.style.opacity = '0.8';
+                moverElemento(e.target, touch.clientX, touch.clientY);
+            }, {passive: false});
+
+            ing.addEventListener('touchmove', e => {
+                if (!elementoArrastrado) return;
+                e.preventDefault(); // Evita que se haga scroll en la página al arrastrar
+                const touch = e.touches[0];
+                moverElemento(elementoArrastrado, touch.clientX, touch.clientY);
+
+                // Comprobar si está sobre la máquina para darle el efecto verde
+                if (esEncimaDeMaquina(touch.clientX, touch.clientY)) {
+                    maquina.classList.add('active');
+                } else {
+                    maquina.classList.remove('active');
+                }
+            }, {passive: false});
+
+            ing.addEventListener('touchend', e => {
+                if (!elementoArrastrado) return;
+                
+                const touch = e.changedTouches[0];
+                
+                // Devolver estilos originales
+                elementoArrastrado.style.position = 'static';
+                elementoArrastrado.style.zIndex = 'auto';
+                elementoArrastrado.style.opacity = '1';
+                elementoArrastrado.style.left = 'auto';
+                elementoArrastrado.style.top = 'auto';
+                maquina.classList.remove('active');
+
+                // ¿Se soltó encima de la máquina?
+                if (esEncimaDeMaquina(touch.clientX, touch.clientY) && recolectados < 3) {
+                    procesarFruta(elementoArrastrado);
+                }
+
+                elementoArrastrado = null;
+            });
         });
 
+        // Funciones auxiliares para móvil
+        function moverElemento(el, x, y) {
+            el.style.left = (x - posInicialX) + 'px';
+            el.style.top = (y - posInicialY) + 'px';
+        }
+
+        function esEncimaDeMaquina(x, y) {
+            const rect = maquina.getBoundingClientRect();
+            // Comprobamos si las coordenadas del dedo caen dentro del rectángulo de la máquina
+            return (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom);
+        }
+
+        // Lógica común de meter fruta (Desktop y Móvil)
+        function procesarFruta(elemento) {
+            const f = elemento.dataset.fruta;
+            if(f) {
+                // Hacer como si entrara
+                elemento.style.visibility = 'hidden';
+                
+                frutasUsadas.push(f);
+                recolectados++;
+                contadorDiv.innerText = `${recolectados} / 3`;
+                maquina.style.transform = 'scale(1.05)';
+                setTimeout(() => maquina.style.transform = 'scale(1)', 150);
+                
+                if (recolectados === 3) btnIniciar.classList.add('ready');
+            }
+        }
+
+        // Eventos Drop/Over Desktop
         maquina.addEventListener('dragover', e => { e.preventDefault(); maquina.classList.add('active'); });
         maquina.addEventListener('dragleave', () => maquina.classList.remove('active'));
         
@@ -335,13 +423,11 @@
 
             const f = e.dataTransfer.getData('fruta');
             if(f) {
-                frutasUsadas.push(f);
-                recolectados++;
-                contadorDiv.innerText = `${recolectados} / 3`;
-                maquina.style.transform = 'scale(1.05)';
-                setTimeout(() => maquina.style.transform = 'scale(1)', 150);
-                
-                if (recolectados === 3) btnIniciar.classList.add('ready');
+                // Buscar qué elemento se arrastró por dataset
+                const emoji = Array.from(ingredientes).find(el => el.dataset.fruta === f && el.style.visibility !== 'hidden');
+                if(emoji) {
+                    procesarFruta(emoji);
+                }
             }
         });
 
@@ -399,6 +485,12 @@
                 contadorDiv.innerText = "0 / 3";
                 barra.style.width = '0%'; contProgreso.style.display = 'none';
                 btnIniciar.innerText = "Mezclar y Crear ⚡";
+                btnIniciar.classList.remove('ready'); // Desactivar el botón de nuevo
+                
+                // Mostrar todas las frutas de nuevo
+                ingredientes.forEach(ing => {
+                    ing.style.visibility = 'visible';
+                });
             }, 300);
         }
 
